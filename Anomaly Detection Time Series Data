@@ -1,0 +1,153 @@
+# Install the Anomaly Detection Toolkit (ADTK) package
+# pip install adtk
+
+# Import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import yfinance as yf
+
+# Import functions and detectors from ADTK
+from adtk.data import validate_series
+from adtk.visualization import plot
+from adtk.detector import (
+    ThresholdAD,
+    QuantileAD,
+    InterQuartileRangeAD,
+    GeneralizedESDTestAD,
+    PersistAD,
+    VolatilityShiftAD,
+    CustomizedDetectorHD,
+)
+
+# Read the temperature data from a CSV file
+s_train = pd.read_csv("temperature.csv", parse_dates=True, squeeze=True)
+
+# Convert the 'Date' column to datetime objects
+s_train["Date"] = pd.to_datetime(s_train["Date"])
+
+# Set the 'Date' column as the index of the DataFrame
+s_train = s_train.set_index("Date")
+
+# Select the 'Mean' column to analyze
+s_train = s_train['Mean']
+
+# Alternatively, you can download stock data using yfinance (commented out)
+# s_train = yf.download("AAPL")['Close']
+
+# Validate the time series data to ensure it is suitable for analysis
+s_train = validate_series(s_train)
+
+# Print the validated time series data
+print(s_train)
+
+# Plot the original time series data
+plot(s_train)
+plt.show()
+
+# ------------------------ Threshold Anomaly Detection ------------------------
+
+# Initialize the ThresholdAD detector with specified high and low thresholds
+threshold_ad = ThresholdAD(high=0.75, low=-0.5)
+
+# Detect anomalies in the time series based on the thresholds
+anomalies = threshold_ad.detect(s_train)
+
+# Plot the time series and mark detected anomalies in red
+plot(
+    s_train,
+    anomaly=anomalies,
+    anomaly_color="red",
+    anomaly_tag="marker"
+)
+plt.show()
+
+# ------------------------ Quantile Anomaly Detection ------------------------
+
+# Initialize the QuantileAD detector with specified high and low quantiles
+quantile_ad = QuantileAD(high=0.99, low=0.01)
+
+# Fit the detector to the data and detect anomalies
+anomalies = quantile_ad.fit_detect(s_train)
+
+# Plot the time series and mark detected anomalies
+plot(
+    s_train,
+    anomaly=anomalies,
+    ts_linewidth=1,
+    ts_markersize=3,
+    anomaly_markersize=5,
+    anomaly_color='red',
+    anomaly_tag="marker"
+)
+plt.show()
+
+# ------------------------ Inter Quartile Range Anomaly Detection ------------------------
+
+# Initialize the InterQuartileRangeAD detector with a specified multiplier 'c'
+iqr_ad = InterQuartileRangeAD(c=1.5)
+
+# Fit the detector to the data and detect anomalies
+anomalies = iqr_ad.fit_detect(s_train)
+
+# Plot the time series and mark detected anomalies
+plot(
+    s_train,
+    anomaly=anomalies,
+    ts_linewidth=1,
+    ts_markersize=3,
+    anomaly_markersize=5,
+    anomaly_color='red',
+    anomaly_tag="marker"
+)
+plt.show()
+
+# ------------------------ Generalized ESD Test Anomaly Detection ------------------------
+
+# Initialize the GeneralizedESDTestAD detector with a specified significance level 'alpha'
+esd_ad = GeneralizedESDTestAD(alpha=0.3)
+
+# Fit the detector to the data and detect anomalies
+anomalies = esd_ad.fit_detect(s_train)
+
+# Plot the time series and mark detected anomalies
+plot(
+    s_train,
+    anomaly=anomalies,
+    ts_linewidth=1,
+    ts_markersize=3,
+    anomaly_markersize=5,
+    anomaly_color='red',
+    anomaly_tag="marker"
+)
+plt.show()
+
+# ------------------------ Persist Anomaly Detection ------------------------
+
+# Initialize the PersistAD detector to detect positive shifts greater than 'c' times the standard deviation
+persist_ad = PersistAD(c=3.0, side='positive')
+
+# Fit the detector to the data and detect anomalies
+anomalies = persist_ad.fit_detect(s_train)
+
+# Plot the time series and highlight detected anomalies
+plot(
+    s_train,
+    anomaly=anomalies,
+    ts_linewidth=1,
+    ts_markersize=3,
+    anomaly_color='red'
+)
+plt.show()
+
+# Re-initialize the PersistAD detector to detect negative shifts greater than 'c' times the standard deviation
+persist_ad = PersistAD(c=1.5, side='negative')
+
+# Fit the detector to the data and detect anomalies
+anomalies = persist_ad.fit_detect(s_train)
+
+# Plot the time series and highlight detected anomalies
+plot(
+    s_train,
+    anomaly=anomalies,
+    ts_linewidth=1,
+    ts_ma
