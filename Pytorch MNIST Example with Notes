@@ -1,3 +1,77 @@
+# Hyperparameter options:
+
+# --batch-size: int (default: 64)
+#     Input batch size for training.
+
+# --test-batch-size: int (default: 1000)
+#     Input batch size for testing.
+
+# --epochs: int (default: 14)
+#     Number of epochs to train.
+
+# --lr: float (default: 1.0)
+#     Learning rate.
+
+# --gamma: float (default: 0.7)
+#     Learning rate step gamma (decay factor for learning rate).
+
+# --no-cuda: action='store_true' (default: False)
+#     Disables CUDA training even if a GPU is available.
+
+# --no-mps: action='store_true' (default: False)
+#     Disables macOS GPU training using Metal Performance Shaders.
+
+# --dry-run: action='store_true' (default: False)
+#     Quickly check a single pass without full training.
+
+# --seed: int (default: 1)
+#     Random seed for reproducibility.
+
+# --log-interval: int (default: 10)
+#     How many batches to wait before logging training status.
+
+# --save-model: action='store_true' (default: False)
+#     For saving the current model after training completes.
+
+# Model hyperparameters (defined within the Net class):
+
+# Convolutional layers:
+#     self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1)
+#         - Input channels: 1 (grayscale images)
+#         - Output channels: 32
+#         - Kernel size: 3
+#         - Stride: 1
+
+#     self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1)
+#         - Input channels: 32
+#         - Output channels: 64
+#         - Kernel size: 3
+#         - Stride: 1
+
+# Dropout layers:
+#     self.dropout1 = nn.Dropout(0.25)
+#         - Dropout probability: 0.25
+
+#     self.dropout2 = nn.Dropout(0.5)
+#         - Dropout probability: 0.5
+
+# Fully connected layers:
+#     self.fc1 = nn.Linear(9216, 128)
+#         - Input features: 9216 (flattened feature map size)
+#         - Output features: 128
+
+#     self.fc2 = nn.Linear(128, 10)
+#         - Input features: 128
+#         - Output features: 10 (number of classes in MNIST)
+
+# Data transformations:
+#     transforms.Normalize((0.1307,), (0.3081,))
+#         - Mean: 0.1307
+#         - Standard deviation: 0.3081
+#         - Normalizes the dataset with the mean and standard deviation of the MNIST dataset.
+
+
+
 import argparse  # Module for parsing command-line options, arguments, and sub-commands
 import torch  # PyTorch library
 import torch.nn as nn  # Neural network module
